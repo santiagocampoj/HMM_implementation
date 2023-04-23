@@ -1,5 +1,3 @@
-# HMM implementation
-
 """HMM implementation
 Problem definition:
 
@@ -34,48 +32,48 @@ class HiddenMarkovModel:
         self.pi = pi
 
     def forward(self, O):
-        # Initialization
+        # initialization
         alpha = np.zeros((len(O), len(self.A)))
         alpha[0, :] = self.pi * self.B[:, O[0]]
 
-        # Induction
+        # induction
         for t in range(1, len(O)):
             for j in range(len(self.A)):
                 alpha[t, j] = np.sum(alpha[t - 1, :] * self.A[:, j]) * self.B[j, O[t]]
 
-        # Termination
+        # termination
         P = np.sum(alpha[-1, :])
 
         return alpha, P
 
     def backward(self, O):
-        # Initialization
+        # initialization
         beta = np.zeros((len(O), len(self.A)))
         beta[-1, :] = 1
 
-        # Induction
+        # induction
         for t in range(len(O) - 2, -1, -1):
             for i in range(len(self.A)):
                 beta[t, i] = np.sum(beta[t + 1, :] * self.A[i, :] * self.B[:, O[t + 1]])
 
-        # Termination
+        # termination
         P = np.sum(beta[0, :] * self.pi * self.B[:, O[0]])
 
         return beta, P
 
     def viterbi(self, O):
-        # Initialization
+        # initialization
         delta = np.zeros((len(O), len(self.A)))
         delta[0, :] = self.pi * self.B[:, O[0]]
         psi = np.zeros((len(O), len(self.A)), dtype=int)
 
-        # Induction
+        # induction
         for t in range(1, len(O)):
             for j in range(len(self.A)):
                 delta[t, j] = np.max(delta[t - 1, :] * self.A[:, j]) * self.B[j, O[t]]
                 psi[t, j] = np.argmax(delta[t - 1, :] * self.A[:, j])
 
-        # Termination
+        # termination
         state_seq = np.zeros(len(O), dtype=int)
         state_seq[-1] = np.argmax(delta[-1, :])
 
@@ -86,33 +84,33 @@ class HiddenMarkovModel:
 
 
 
-# State transition probability matrix (A)
+# state transition probability matrix (A)
 A = np.array([
     [0.2, 0.3, 0.5], # Good mood
     [0.2, 0.2, 0.6], # Neutral mood
     [0.0, 0.2, 0.8]  # Bad mood
 ])
 
-# Observation probability matrix (B)
+# observation probability matrix (B)
 B = np.array([
     [0.8, 0.2], # Good mood - P(easy|good), P(difficult|good)
     [0.5, 0.5], # Neutral mood - P(easy|neutral), P(difficult|neutral)
     [0.1, 0.9]  # Bad mood - P(easy|bad), P(difficult|bad)
 ])
 
-# Initial state distribution (n)
+# initial state distribution (n)
 pi = np.array([0.8, 0.2, 0.0]) # P(good), P(neutral), P(bad)
 
 # HMM implementation
 hmm = HiddenMarkovModel(A, B, pi)
 
-# Example observation sequence: ['easy', 'difficult', 'difficult', 'easy']
+# example observation sequence: ['easy', 'difficult', 'difficult', 'easy']
 obs_seq = [0, 1, 1, 0]
 
-# Evaluation | Forward algorithm
+# evaluation | Forward algorithm
 alpha, likelihood = hmm.forward(obs_seq)
 print(f"\nLikelihoof of the observation sequence: {likelihood}")
 
-# Decoding | Viterbi algorithm
+# decoding | Viterbi algorithm
 delta, state_seq = hmm.viterbi(obs_seq)
 print(f"\nMost likely sequence of hidden states (teacher's moods): {state_seq}")
