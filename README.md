@@ -20,7 +20,6 @@ This code is an implementation of a Hidden Markov Model (HMM) to better understa
 
 =========================================
 =========================================
-=========================================
 
 The code implements a Hidden Markov Model (HMM) to solve this problem. It defines a class, `HiddenMarkovModel`, which takes the state transition probability matrix (A), the observation probability matrix (B), and the initial state distribution (pi) as inputs. The class has three methods:
 
