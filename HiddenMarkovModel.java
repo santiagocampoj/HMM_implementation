@@ -84,4 +84,38 @@ public class HiddenMarkovModel {
         stateSeq[O.length - 1] = maxIdx;
 
         for (int t = O.length - 2; t >= 0; t--) {
-            stateSeq[t] = psi[t +
+            stateSeq[t] = psi[t + 1][stateSeq[t + 1]];
+        }
+
+        return stateSeq;
+    }
+
+    public static void main(String[] args) {
+        double[][] A = {
+            {0.2, 0.3, 0.5},
+            {0.2, 0.2, 0.6},
+            {0.0, 0.2, 0.8}
+        };
+
+        double[][] B = {
+            {0.8, 0.2},
+            {0.5, 0.5},
+            {0.1, 0.9}
+        };
+
+        double[] pi = {0.8, 0.2, 0.0};
+
+        HiddenMarkovModel hmm = new HiddenMarkovModel(A, B, pi);
+
+        int[] obsSeq = {0, 1, 1, 0};
+
+        double[][] alpha = hmm.forward(obsSeq);
+        double likelihood = Arrays.stream(alpha[obsSeq.length - 1]).sum();
+        System.out.println("\nLikelihood of the observation sequence: " + likelihood);
+
+        double[][] beta = hmm.backward(obsSeq);
+
+        int[] stateSeq = hmm.viterbi(obsSeq);
+        System.out.println("\nMost likely sequence of hidden states (teacher's moods): " + Arrays.toString(stateSeq));
+    }
+}
