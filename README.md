@@ -1,4 +1,4 @@
-# HMM_implementation
+# HMM and Viterbi implementation
 This code is an implementation of a Hidden Markov Model (HMM) to better understand an exercise scenario. The problem statement is as follows:
 
 - There is a teacher who assigns students two different kinds of homework:
